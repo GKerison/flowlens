@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="观流（FlowLens）——跨平台 HTTP/HTTPS 抓包工作台，开代理、装证书、连手机，三步看到明文流量。">
+<meta name="theme-color" content="#0c1626">
+<title>观流 FlowLens · 跨平台 HTTP/HTTPS 抓包工作台</title>
+<style>
+  :root {
+    --bg:#0b1220; --panel:#121c30; --panel2:#17233a; --line:#253655;
+    --text:#e8eefb; --muted:#98a8c4; --accent:#4a8cff; --accent2:#7fd4ff;
+    --green:#4ade80; --maxw:1080px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+  a{color:var(--accent2);text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  header{padding:72px 0 48px;text-align:center;background:
+    radial-gradient(800px 320px at 50% -10%,rgba(74,140,255,.22),transparent 70%)}
+  header img{width:96px;height:96px;filter:drop-shadow(0 8px 24px rgba(74,140,255,.35))}
+  h1{font-size:44px;margin:14px 0 4px;letter-spacing:-.02em}
+  h1 span{font-size:20px;color:var(--muted);font-weight:400;letter-spacing:0}
+  .sub{color:var(--muted);font-size:18px;margin:8px auto 24px;max-width:660px}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:12px 24px;border-radius:10px;font-weight:600;
+    background:var(--accent);color:#fff;transition:transform .15s,filter .15s}
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  section{padding:52px 0;border-top:1px solid var(--line)}
+  h2{font-size:28px;margin:0 0 24px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card h3{margin:0 0 8px;font-size:17px;color:var(--accent2)}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+  .shot{width:100%;border:1px solid var(--line);border-radius:12px;display:block;margin-top:18px}
+  .steps{counter-reset:s;display:grid;gap:14px}
+  .step{display:flex;gap:14px;align-items:flex-start}
+  .step::before{counter-increment:s;content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;
+    background:var(--panel2);border:1px solid var(--line);color:var(--accent2);
+    display:grid;place-items:center;font-weight:700}
+  .step p{margin:4px 0;color:var(--muted)}
+  .step strong{color:var(--text)}
+  .warn{background:#2a2214;border:1px solid #6b5220;color:#f0c274;border-radius:12px;padding:16px 18px;margin-top:20px;font-size:14px}
+  .downloads{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .dl{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;text-align:center}
+  .dl b{display:block;font-size:18px;margin-bottom:6px}
+  .dl small{color:var(--muted)}
+  .dl a{display:inline-block;margin-top:12px;padding:8px 18px;border-radius:8px;
+    background:var(--panel2);border:1px solid var(--line)}
+  footer{padding:36px 0;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+  code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:.9em}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <img src="assets/icon.svg" alt="观流图标">
+    <h1>观流 <span>FlowLens</span></h1>
+    <p class="sub">跨平台 HTTP/HTTPS 抓包工作台。开代理 → 装证书 → 扫码连手机，三步看到明文流量。</p>
+    <div class="cta">
+      <a class="btn" href="#download">下载</a>
+      <a class="btn ghost" href="https://github.com/kerison/flowlens">GitHub 仓库</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>界面预览</h2>
+    <p style="color:var(--muted);margin-top:-12px">流量列表与筛选</p>
+    <img class="shot" src="assets/screenshot-main.png" alt="观流流量列表界面截图">
+    <p style="color:var(--muted);margin-top:22px">设置抽屉 · 网络、证书、解密与映射</p>
+    <img class="shot" src="assets/screenshot-settings.png" alt="观流设置界面截图">
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>为什么选择观流</h2>
+    <div class="grid">
+      <div class="card"><h3>三步上手</h3><p>启动代理、安装证书、手机扫码，无需复杂配置即可解密 HTTPS。</p></div>
+      <div class="card"><h3>手机友好</h3><p>自动过滤虚拟网卡地址，顶栏直接给出手机可用的代理地址；iOS 完全信任指引与验证入口。</p></div>
+      <div class="card"><h3>完整工具链</h3><p>请求重放、Map Local / Map Remote、断点改写、HAR / JSON 导出、响应体搜索。</p></div>
+      <div class="card"><h3>暂停即透传</h3><p>暂停抓包时退化为纯隧道中转，不解密、不影响上网；一键恢复，无需重启。</p></div>
+      <div class="card"><h3>双语与风格</h3><p>中英双语默认中文；标准 / 舒展（大屏）/ 极简三种界面风格。</p></div>
+      <div class="card"><h3>开源可控</h3><p>MIT 许可，根证书私钥仅存本地（0600），所有敏感操作需二次确认。</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>快速开始</h2>
+    <div class="steps">
+      <div class="step"><div><strong>启动代理</strong><p>点击顶栏「启动代理」，默认监听 <code>0.0.0.0:8888</code>。</p></div></div>
+      <div class="step"><div><strong>安装根证书</strong><p>设置 → 证书 → 扫码打开下载页，按指引安装。</p></div></div>
+      <div class="step"><div><strong>iPhone 开启完全信任</strong><p>设置 → 通用 → 关于本机 → 证书信任设置 → 打开开关。</p></div></div>
+      <div class="step"><div><strong>手机连代理</strong><p>Wi-Fi 的 HTTP 代理填顶栏显示的局域网地址，浏览器访问 HTTPS 即可看到明文。</p></div></div>
+    </div>
+    <div class="warn">⚠️ 只在你自己的设备上安装根证书。安装意味着持有私钥的一方可以解密该设备的 HTTPS 流量。局域网模式建议开启代理认证。</div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <h2>下载</h2>
+    <div class="downloads">
+      <div class="dl"><b>macOS</b><small>universal · Apple Silicon + Intel</small><br><a href="https://github.com/kerison/flowlens/releases/latest">DMG</a></div>
+      <div class="dl"><b>Windows</b><small>x64 · NSIS 安装包</small><br><a href="https://github.com/kerison/flowlens/releases/latest">EXE</a></div>
+      <div class="dl"><b>Linux</b><small>x64 · AppImage / deb / rpm</small><br><a href="https://github.com/kerison/flowlens/releases/latest">安装包</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© 2026 观流 FlowLens · MIT License · <a href="https://github.com/kerison/flowlens">源码</a></div>
+</footer>
+</body>
+</html>

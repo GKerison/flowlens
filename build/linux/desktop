@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=FlowLens
+Comment=Cross-platform HTTP/HTTPS traffic inspector
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/flowlens %u
+Terminal=false
+Type=Application
+Icon=flowlens
+Categories=Utility;
+StartupWMClass=flowlens
+
+ 

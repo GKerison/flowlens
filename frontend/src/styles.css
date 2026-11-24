@@ -1,0 +1,338 @@
+/* 观流 全局样式：设计令牌 + 基础排版 + 暗色主题。
+   约定：组件内只使用变量，不写死颜色，保证主题切换零成本。 */
+
+:root {
+  --fl-bg: #f6f7f9;
+  --fl-panel: #ffffff;
+  --fl-panel-2: #fbfcfd;
+  --fl-text: #191c22;
+  --fl-text-2: #4b5563;
+  --fl-muted: #8a919e;
+  --fl-border: #e5e8ed;
+  --fl-border-strong: #d3d8e0;
+  --fl-accent: #2f6fed;
+  --fl-accent-soft: #eaf0fe;
+  --fl-green: #15803d;
+  --fl-green-soft: #e8f6ee;
+  --fl-orange: #b45309;
+  --fl-orange-soft: #fdf3e3;
+  --fl-red: #c2261f;
+  --fl-red-soft: #fdeceb;
+  --fl-purple: #6d43c8;
+  --fl-purple-soft: #f1ecfd;
+  --fl-radius: 10px;
+  --fl-radius-sm: 6px;
+  /* 界面风格令牌：三种预设只覆盖这里，组件不写死尺寸（见 data-style） */
+  --fl-font-size: 13px;
+  --fl-topbar-h: 52px;
+  --fl-topbar-pad-x: 14px;
+  --fl-topbar-gap: 10px;
+  --fl-filter-pad-y: 10px;
+  --fl-filter-pad-x: 12px;
+  --fl-filter-gap: 8px;
+  --fl-list-min-w: 340px;
+  --fl-panel-w: clamp(320px, 42%, 640px);
+  --fl-head-h: 30px;
+  --fl-row-h: 32px;
+  /* 动效令牌：统一节奏，避免每个组件各写一套"看起来差不多"的时长 */
+  --fl-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fl-fast: 0.16s;
+  --fl-normal: 0.28s;
+  --fl-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.06);
+  --fl-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --fl-bg: #14161b;
+  --fl-panel: #1b1e25;
+  --fl-panel-2: #20242c;
+  --fl-text: #e8eaee;
+  --fl-text-2: #b3b9c4;
+  --fl-muted: #7c8494;
+  --fl-border: #2a2f39;
+  --fl-border-strong: #3a4150;
+  --fl-accent: #6f9bff;
+  --fl-accent-soft: #1e2a44;
+  --fl-green: #57c98a;
+  --fl-green-soft: #16281f;
+  --fl-orange: #e0a054;
+  --fl-orange-soft: #2a2216;
+  --fl-red: #ef7a72;
+  --fl-red-soft: #2c1917;
+  --fl-purple: #b79bf0;
+  --fl-purple-soft: #241d36;
+  --fl-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--fl-bg);
+  color: var(--fl-text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Segoe UI", sans-serif;
+  font-size: var(--fl-font-size);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 1px solid var(--fl-border-strong);
+  background: var(--fl-panel);
+  border-radius: var(--fl-radius-sm);
+  padding: 5px 12px;
+  transition:
+    background var(--fl-fast) ease,
+    border-color var(--fl-fast) ease,
+    color var(--fl-fast) ease,
+    transform var(--fl-fast) var(--fl-ease),
+    box-shadow var(--fl-fast) ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--fl-panel-2);
+  border-color: var(--fl-muted);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.07);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--fl-accent);
+  outline-offset: 1px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+  box-shadow: none;
+}
+
+button.primary {
+  background: linear-gradient(135deg, var(--fl-accent), color-mix(in srgb, var(--fl-accent) 78%, var(--fl-purple)));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--fl-accent) 28%, transparent);
+}
+
+button.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  background: linear-gradient(135deg, var(--fl-accent), color-mix(in srgb, var(--fl-accent) 78%, var(--fl-purple)));
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--fl-accent) 34%, transparent);
+}
+
+button.danger {
+  color: var(--fl-red);
+  border-color: var(--fl-border-strong);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--fl-text);
+  background: var(--fl-panel);
+  border: 1px solid var(--fl-border-strong);
+  border-radius: var(--fl-radius-sm);
+  padding: 5px 9px;
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--fl-accent);
+  box-shadow: 0 0 0 3px var(--fl-accent-soft);
+}
+
+input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--fl-accent);
+  padding: 0;
+}
+
+code,
+pre {
+  font-family: var(--fl-mono);
+  font-size: 12px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--fl-border-strong);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fl-muted);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card {
+  background: var(--fl-panel);
+  border: 1px solid var(--fl-border);
+  border-radius: var(--fl-radius);
+  box-shadow: var(--fl-shadow);
+}
+
+.mono {
+  font-family: var(--fl-mono);
+}
+
+.muted {
+  color: var(--fl-muted);
+}
+
+/* 方法色：和抓包工具惯例保持一致，便于扫视 */
+.m-GET {
+  color: var(--fl-green);
+}
+.m-POST {
+  color: var(--fl-accent);
+}
+.m-PUT,
+.m-PATCH {
+  color: var(--fl-orange);
+}
+.m-DELETE {
+  color: var(--fl-red);
+}
+.m-OTHER {
+  color: var(--fl-purple);
+}
+
+.s-2 {
+  color: var(--fl-green);
+}
+.s-3 {
+  color: var(--fl-accent);
+}
+.s-4 {
+  color: var(--fl-orange);
+}
+.s-5 {
+  color: var(--fl-red);
+}
+.s-0 {
+  color: var(--fl-muted);
+}
+
+/* ---------- 动效原语 ----------
+   只动 opacity / transform：WebView 下不会触发重排，抓包列表滚动仍能保持流畅。 */
+
+@keyframes fl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fl-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fl-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fl-fresh {
+  0% {
+    background: var(--fl-accent-soft);
+    box-shadow: inset 2px 0 0 var(--fl-accent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: inset 2px 0 0 transparent;
+  }
+}
+
+@keyframes fl-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--fl-green) 14%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--fl-green) 4%, transparent);
+  }
+}
+
+/* 系统偏好减少动效时全部降级为静态——无障碍优先，且低端机也能受益 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 界面风格预设 ----------
+   大屏舒展：更大字号、更宽的详情面板与行距，适合外接显示器或投屏。
+   全部通过令牌覆盖，组件无需感知当前风格。 */
+:root[data-style='spacious'] {
+  --fl-font-size: 15px;
+  --fl-topbar-h: 64px;
+  --fl-topbar-pad-x: 22px;
+  --fl-topbar-gap: 16px;
+  --fl-filter-pad-y: 15px;
+  --fl-filter-pad-x: 20px;
+  --fl-filter-gap: 12px;
+  --fl-list-min-w: 420px;
+  --fl-panel-w: clamp(440px, 48%, 840px);
+  --fl-head-h: 38px;
+  --fl-row-h: 40px;
+}

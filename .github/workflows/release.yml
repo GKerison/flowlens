@@ -1,0 +1,143 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    name: 'macOS (universal: arm64 + amd64)'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # git describe --tags 需要完整 tag 历史来注入版本号
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.1.0
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Build universal app
+        run: go run github.com/go-task/task/v3/cmd/task@v3.41.0 darwin:package:universal
+      - name: Create DMG
+        run: go run github.com/go-task/task/v3/cmd/task@v3.41.0 darwin:create:dmg
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: guanliu-macos
+          path: |
+            bin/*.dmg
+            bin/*.app/**
+          if-no-files-found: error
+
+  build-windows:
+    name: Windows (x64, NSIS installer)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Ensure NSIS is available
+        shell: pwsh
+        run: |
+          if (-not (Get-Command makensis -ErrorAction SilentlyContinue)) {
+            choco install nsis -y --no-progress
+          }
+          $nsis = (Get-Command makensis -ErrorAction SilentlyContinue).Source
+          if (-not $nsis) { $nsis = 'C:\Program Files (x86)\NSIS' }
+          $dir = if ($nsis -like '*.exe') { Split-Path $nsis } else { $nsis }
+          Add-Content -Path $env:GITHUB_PATH -Value $dir
+          & (Join-Path $dir 'makensis.exe') /VERSION
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.1.0
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Build and package (NSIS installer)
+        run: go run github.com/go-task/task/v3/cmd/task@v3.41.0 windows:package
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: guanliu-windows
+          path: |
+            bin/*.exe
+          if-no-files-found: error
+
+  build-linux:
+    name: Linux (x64, AppImage / deb / rpm)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev pkg-config fuse libfuse2
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.1.0
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Build and package (AppImage / deb / rpm)
+        run: go run github.com/go-task/task/v3/cmd/task@v3.41.0 linux:package
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: guanliu-linux
+          path: |
+            bin/*.AppImage
+            bin/*.deb
+            bin/*.rpm
+          if-no-files-found: warn
+
+  release:
+    name: Publish GitHub Release
+    needs: [build-macos, build-windows, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
+      - name: List artifacts
+        run: find dist-artifacts -type f | head -50
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: dist-artifacts/**/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false

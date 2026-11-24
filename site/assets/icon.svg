@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2a4a"/>
+      <stop offset="0.55" stop-color="#142238"/>
+      <stop offset="1" stop-color="#0c1626"/>
+    </linearGradient>
+    <linearGradient id="eye" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#7fb2ff"/>
+      <stop offset="0.5" stop-color="#2f6fed"/>
+      <stop offset="1" stop-color="#1d4bb5"/>
+    </linearGradient>
+    <linearGradient id="flow1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f6fed" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#59d0ff"/>
+      <stop offset="0.75" stop-color="#a8e8ff"/>
+      <stop offset="1" stop-color="#59d0ff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="flow2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f6fed" stop-opacity="0"/>
+      <stop offset="0.4" stop-color="#2f6fed"/>
+      <stop offset="0.7" stop-color="#7fb2ff"/>
+      <stop offset="1" stop-color="#2f6fed" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="pupil" cx="0.42" cy="0.38" r="0.7">
+      <stop offset="0" stop-color="#eaf5ff"/>
+      <stop offset="0.45" stop-color="#6fc3ff"/>
+      <stop offset="1" stop-color="#1e56c8"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 圆角方形底 -->
+  <rect x="8" y="8" width="496" height="496" rx="112" fill="url(#bg)"/>
+  <rect x="8" y="8" width="496" height="496" rx="112" fill="none" stroke="#3d5b93" stroke-opacity="0.55" stroke-width="3"/>
+
+  <!-- 眼睛外轮廓：观 -->
+  <path d="M70 256 C140 158, 372 158, 442 256 C372 354, 140 354, 70 256 Z"
+        fill="#0d1c33" stroke="url(#eye)" stroke-width="12" stroke-linejoin="round"/>
+
+  <!-- 瞳孔：镜头 -->
+  <circle cx="256" cy="256" r="70" fill="url(#pupil)" filter="url(#glow)"/>
+  <circle cx="256" cy="256" r="70" fill="none" stroke="#d9ecff" stroke-opacity="0.85" stroke-width="5"/>
+  <circle cx="256" cy="256" r="34" fill="#0b1a30"/>
+  <circle cx="238" cy="238" r="12" fill="#ffffff" fill-opacity="0.9"/>
+
+  <!-- 穿过眼睛的数据流：流 -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M96 214 C168 178, 214 246, 300 214 S400 178, 434 214" stroke="url(#flow1)" stroke-width="9" filter="url(#glow)"/>
+    <path d="M90 300 C170 336, 224 266, 306 300 S402 336, 436 300" stroke="url(#flow2)" stroke-width="9" filter="url(#glow)"/>
+    <path d="M112 256 C180 232, 210 280, 282 256 S380 232, 416 256" stroke="#e8f6ff" stroke-opacity="0.9" stroke-width="6"/>
+  </g>
+
+  <!-- 三个数据包节点 -->
+  <g fill="#bfe6ff">
+    <circle cx="164" cy="204" r="7"/>
+    <circle cx="352" cy="312" r="7"/>
+    <circle cx="392" cy="248" r="6"/>
+  </g>
+</svg>

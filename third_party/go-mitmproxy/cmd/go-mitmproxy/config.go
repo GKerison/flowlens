@@ -1,0 +1,103 @@
+package main
+
+import (
+	"flag"
+	"fmt"
+
+	"github.com/lqqyt2423/go-mitmproxy/internal/helper"
+	log "github.com/sirupsen/logrus"
+)
+
+func loadConfigFromFile(filename string) (*Config, error) {
+	var config Config
+	if err := helper.NewStructFromFile(filename, &config); err != nil {
+		return nil, err
+	}
+	return &config, nil
+}
+
+func loadConfigFromCli() *Config {
+	config := new(Config)
+
+	flag.BoolVar(&config.version, "version", false, "show go-mitmproxy version")
+	flag.StringVar(&config.Addr, "addr", ":9080", "proxy listen addr")
+	flag.StringVar(&config.WebAddr, "web_addr", ":9081", "web interface listen addr")
+	flag.BoolVar(&config.SslInsecure, "ssl_insecure", false, "not verify upstream server SSL/TLS certificates.")
+	flag.Var((*arrayValue)(&config.IgnoreHosts), "ignore_hosts", "a list of ignore hosts")
+	flag.Var((*arrayValue)(&config.AllowHosts), "allow_hosts", "a list of allow hosts")
+	flag.StringVar(&config.CertPath, "cert_path", "", "path of generate cert files")
+	flag.IntVar(&config.Debug, "debug", 0, "debug mode: 1 - print debug log, 2 - show debug from")
+	flag.StringVar(&config.Dump, "dump", "", "dump filename")
+	flag.IntVar(&config.DumpLevel, "dump_level", 0, "dump level: 0 - header, 1 - header + body")
+	flag.StringVar(&config.Upstream, "upstream", "", "upstream proxy")
+	flag.BoolVar(&config.UpstreamCert, "upstream_cert", true, "connect to upstream server to look up certificate details")
+	flag.StringVar(&config.MapRemote, "map_remote", "", "map remote config filename")
+	flag.StringVar(&config.MapLocal, "map_local", "", "map local config filename")
+	flag.StringVar(&config.LogFile, "log_file", "", "log file path")
+	flag.StringVar(&config.filename, "f", "", "read config from the filename")
+
+	flag.StringVar(&config.ProxyAuth, "proxyauth", "", `enable proxy authentication. Format: "username:pass", "user1:pass1|user2:pass2","any" to accept any user/pass combination`)
+	flag.Parse()
+
+	return config
+}
+
+func mergeConfigs(fileConfig, cliConfig *Config, setFlags map[string]bool) *Config {
+	config := new(Config)
+	*config = *fileConfig
+	merge := func(name string, apply func()) {
+		if setFlags[name] {
+			apply()
+		}
+	}
+
+	merge("addr", func() { config.Addr = cliConfig.Addr })
+	merge("web_addr", func() { config.WebAddr = cliConfig.WebAddr })
+	merge("ssl_insecure", func() { config.SslInsecure = cliConfig.SslInsecure })
+	merge("ignore_hosts", func() { config.IgnoreHosts = cliConfig.IgnoreHosts })
+	merge("allow_hosts", func() { config.AllowHosts = cliConfig.AllowHosts })
+	merge("cert_path", func() { config.CertPath = cliConfig.CertPath })
+	merge("debug", func() { config.Debug = cliConfig.Debug })
+	merge("dump", func() { config.Dump = cliConfig.Dump })
+	merge("dump_level", func() { config.DumpLevel = cliConfig.DumpLevel })
+	merge("upstream", func() { config.Upstream = cliConfig.Upstream })
+	merge("upstream_cert", func() { config.UpstreamCert = cliConfig.UpstreamCert })
+	merge("map_remote", func() { config.MapRemote = cliConfig.MapRemote })
+	merge("map_local", func() { config.MapLocal = cliConfig.MapLocal })
+	merge("log_file", func() { config.LogFile = cliConfig.LogFile })
+	merge("proxyauth", func() { config.ProxyAuth = cliConfig.ProxyAuth })
+	return config
+}
+
+func loadConfig() *Config {
+	cliConfig := loadConfigFromCli()
+	if cliConfig.version {
+		return cliConfig
+	}
+	if cliConfig.filename == "" {
+		return cliConfig
+	}
+
+	setFlags := make(map[string]bool)
+	flag.Visit(func(f *flag.Flag) {
+		setFlags[f.Name] = true
+	})
+
+	fileConfig, err := loadConfigFromFile(cliConfig.filename)
+	if err != nil {
+		log.Fatalf("read config from %v error %v", cliConfig.filename, err)
+	}
+	return mergeConfigs(fileConfig, cliConfig, setFlags)
+}
+
+// arrayValue 实现了 flag.Value 接口
+type arrayValue []string
+
+func (a *arrayValue) String() string {
+	return fmt.Sprint(*a)
+}
+
+func (a *arrayValue) Set(value string) error {
+	*a = append(*a, value)
+	return nil
+}

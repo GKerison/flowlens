@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  公证（notarytool）要求开启 Hardened Runtime，而 Hardened Runtime 默认禁止
+  应用向其它进程发送 Apple Event。接管系统代理时我们用 osascript 申请提权，
+  必须显式声明 automation.apple-events，否则签名后的正式包会：
+    点击「接管系统代理」→ 没有任何反应（AppleScript 报 -1743）。
+  开发时用 `wails3 dev` 不会带这些限制，所以这个坑只会在发版后暴露。
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>com.apple.security.automation.apple-events</key>
+    <true/>
+  </dict>
+</plist>
