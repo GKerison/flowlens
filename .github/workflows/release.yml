@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag, e.g. v0.1.0'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -105,7 +110,12 @@ jobs:
       - name: Install Linux build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev pkg-config fuse libfuse2
+          sudo apt-get install -y \
+            build-essential pkg-config \
+            libgtk-4-dev libwebkitgtk-6.0-dev \
+            libgtk-3-dev libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev librsvg2-dev \
+            fuse libfuse2
       - name: Install Wails
         run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.1.0
       - name: Install frontend dependencies
@@ -136,7 +146,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ inputs.tag || github.ref_name }}
           files: dist-artifacts/**/*
           generate_release_notes: true
           draft: false
