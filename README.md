@@ -52,6 +52,8 @@ bin/flowlens-server
 
 - `main` 是唯一可发版分支：**任何功能改动先开 feature 分支开发 → 合并回 main → 打 tag 打包发版**
 - 推送 `v*` tag 会触发 GitHub Actions，自动生成 macOS / Windows / Linux 三平台产物并创建 Release
+- Release 下载地址：<https://github.com/GKerison/flowlens/releases/latest>
+- 三平台均使用 GitHub 托管 Runner；项目站点通过 GitHub Pages 自动发布
 - 详见 `CONVENTIONS.md` 的分支工作流章节
 
 ## 安全说明

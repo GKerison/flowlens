@@ -52,6 +52,8 @@ See `Taskfile.yml` and `build/<platform>/Taskfile.yml` for cross-compilation opt
 
 - `main` is the only releasable branch: **develop every change on a feature branch, merge into main, then tag to release**
 - Pushing a `v*` tag triggers GitHub Actions to build macOS, Windows and Linux artifacts and publish a Release
+- Release downloads: <https://github.com/GKerison/flowlens/releases/latest>
+- All three platforms use GitHub-hosted runners; the project site is published with GitHub Pages
 - See the branching workflow section in `CONVENTIONS.md`
 
 ## Security notes
