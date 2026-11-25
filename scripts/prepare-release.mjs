@@ -74,8 +74,17 @@ function baseVersion(opts) {
   return tag ? normalize(tag) : configVersion()
 }
 
-function commitsSince(base) {
-  const tag = git('describe', '--tags', '--abbrev=0')
+function commitsSince(base, explicit = false) {
+  let tag = git('describe', '--tags', '--abbrev=0')
+  if (explicit) {
+    // CI 在 vX.Y.Z tag 上运行：当前 tag 就指向 HEAD，
+    // 若从它开始取提交会得到空列表，所以要回退到上一个 tag。
+    const tags = git('tag', '--sort=-creatordate', '--merged', 'HEAD')
+      .split('\n')
+      .map((t) => t.trim())
+      .filter(Boolean)
+    if (tags.length && normalize(tags[0]) === normalize(base)) tag = tags[1] || ''
+  }
   const range = tag ? `${tag}..HEAD` : 'HEAD'
   const raw = git('log', range, '--no-merges', '--pretty=%s%x1f%b%x1e')
   if (!raw) return []
@@ -222,7 +231,7 @@ function syncVersionFiles(version, date, notes) {
 function main() {
   const opts = args()
   const base = baseVersion(opts)
-  const commits = commitsSince(base)
+  const commits = commitsSince(base, Boolean(opts.version || opts.tag))
   const version = opts.version || opts.tag
     ? normalize(opts.version || opts.tag)
     : bumpVersion(base, commits, opts.bump)
