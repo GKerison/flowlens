@@ -29,5 +29,9 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+      # upload-artifact 的元数据在 Actions API 里有短暂的可见延迟，
+      # deploy-pages 紧接着查会偶发 "Found 0 artifact(s)"；等待后再部署。
+      - name: Wait for artifact metadata
+        run: sleep 20
       - id: deployment
         uses: actions/deploy-pages@v4
