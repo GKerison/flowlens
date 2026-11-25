@@ -187,6 +187,15 @@ async function onExportConfig(): Promise<void> {
   await config.exportConfig(null)
 }
 
+/* ---------------- 版本与更新 ---------------- */
+
+const currentVersion = computed(() => config.bootstrap?.version || '0.1.0')
+const updateInfo = computed(() => config.updateInfo)
+const updateAvailable = computed(
+  () => !!updateInfo.value && !updateInfo.value.upToDate && !!updateInfo.value.assetName,
+)
+const updateNotes = computed(() => (updateInfo.value?.notes || '').trim())
+
 /**
  * Esc 关闭抽屉。挂在 window 上而不是 overlay：抽屉打开时焦点通常还留在
  * 触发按钮或抽屉内的输入框里，overlay 自身永远收不到键盘事件。
@@ -565,6 +574,43 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown, true))
                 </div>
               </form>
 
+              <section class="card block">
+                <header class="block-head">
+                  <h3>{{ t('版本与更新') }}</h3>
+                  <p class="muted">
+                    {{ t('更新会下载官方安装包、静默安装并自动重启；请先保存正在编辑的数据。') }}
+                  </p>
+                </header>
+
+                <div class="update-row">
+                  <span class="version-tag">v{{ currentVersion }}</span>
+                  <span v-if="updateAvailable" class="version-tag new">
+                    {{ t('发现 v{version}', { version: updateInfo?.latestVersion || '' }) }}
+                  </span>
+                  <span v-else-if="updateInfo?.upToDate" class="muted small">{{ t('已是最新版本') }}</span>
+                  <div class="spacer" />
+                  <button class="ghost small-btn" :disabled="config.updateChecking" @click="config.checkUpdate()">
+                    {{ config.updateChecking ? t('检查中…') : t('检查更新') }}
+                  </button>
+                  <button
+                    v-if="updateAvailable"
+                    class="primary small-btn"
+                    :disabled="config.updateInstalling"
+                    @click="config.installUpdate()"
+                  >
+                    {{ config.updateInstalling ? t('更新中…') : t('更新并重启') }}
+                  </button>
+                </div>
+
+                <details v-if="updateNotes" class="manual update-notes">
+                  <summary>{{ t('查看更新说明') }}</summary>
+                  <pre>{{ updateNotes }}</pre>
+                </details>
+                <p v-if="config.updateResult?.manual" class="warn-text">
+                  {{ t('自动安装未成功，安装包已保存到：{path}', { path: config.updateResult.path }) }}
+                </p>
+              </section>
+
               <!-- 极简风格下过滤条只剩搜索，导出/清空入口收在这里（功能不删） -->
               <form v-if="ui.style === 'simple'" class="card block">
                 <header class="block-head">
@@ -590,7 +636,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown, true))
 
               <div class="footer">
                 <span class="muted path">{{ t('配置文件：{path}', { path: config.bootstrap?.configPath ?? '' }) }}</span>
-                <span class="muted path">v{{ config.bootstrap?.version || '0.1.0' }}</span>
+                <span class="muted path">v{{ currentVersion }}</span>
                 <div class="spacer" />
                 <button type="button" class="ghost" :title="t('导出当前全部配置为 JSON 文件')" @click="onExportConfig">
                   {{ t('导出配置') }}
@@ -984,5 +1030,38 @@ textarea:focus {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.update-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.version-tag {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--fl-panel-2);
+  border: 1px solid var(--fl-border);
+  color: var(--fl-text-2);
+}
+
+.version-tag.new {
+  background: var(--fl-accent-soft);
+  border-color: var(--fl-accent);
+  color: var(--fl-accent);
+}
+
+.update-notes pre {
+  margin: 8px 0 0;
+  max-height: 180px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--fl-text-2);
 }
 </style>

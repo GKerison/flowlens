@@ -47,6 +47,14 @@ tasks:
     cmds:
       - task: common:setup:docker
 
+  release:prepare:
+    summary: 自动生成版本号、CHANGELOG、Release 说明与版本清单
+    desc: |
+      用法: task release:prepare -- --bump auto|major|minor|patch
+      也可在 CI 中传 --tag v0.2.0 指定版本号。
+    cmds:
+      - node scripts/prepare-release.mjs {{.CLI_ARGS}}
+
   build:server:
     summary: Builds the application in server mode (no GUI, HTTP server only)
     cmds:

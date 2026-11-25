@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "notes": "## v0.2.0（2026-11-25）\n\n### 新增\n- 观流（FlowLens）跨平台 HTTP/HTTPS 抓包工作台\n\n### 修复\n- install GTK4 dependencies for Linux release\n\n### 构建与维护\n- 适配 GitHub Actions 与 Pages\n- 适配 CNB 构建与发布",
+  "publishedAt": "2026-11-25",
+  "pageUrl": "https://github.com/GKerison/flowlens/releases/tag/v0.2.0",
+  "assets": {
+    "darwin": {
+      "name": "flowlens.dmg",
+      "browser_download_url": "https://github.com/GKerison/flowlens/releases/download/v0.2.0/flowlens.dmg",
+      "size": 0
+    },
+    "windows": {
+      "name": "flowlens-amd64-installer.exe",
+      "browser_download_url": "https://github.com/GKerison/flowlens/releases/download/v0.2.0/flowlens-amd64-installer.exe",
+      "size": 0
+    },
+    "linux": {
+      "name": "flowlens-x86_64.AppImage",
+      "browser_download_url": "https://github.com/GKerison/flowlens/releases/download/v0.2.0/flowlens-x86_64.AppImage",
+      "size": 0
+    }
+  }
+}

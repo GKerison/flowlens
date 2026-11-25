@@ -7,7 +7,8 @@ vars:
   # 发行版本号：有 git tag 时取 tag，否则回落到 dev。
   # 通过 ldflags 注入 service.Version，界面顶栏与 HAR 导出里的版本都来自它。
   APP_VERSION:
-    sh: git describe --tags --always --dirty 2>/dev/null || echo dev
+    # CI 可通过环境变量覆盖（例如发布流程算出的版本号）；本地仍从 git tag 推导。
+    sh: echo "${APP_VERSION:-$(git describe --tags --always --dirty 2>/dev/null || echo dev)}"
   # Docker image for cross-compilation (used when building on non-macOS)
   CROSS_IMAGE: wails-cross
 

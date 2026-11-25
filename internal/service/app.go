@@ -34,9 +34,6 @@ import (
 	"github.com/kerison/flowlens/internal/trust"
 )
 
-// Version 由构建流程写入，默认值仅用于本地开发。
-var Version = "0.1.0"
-
 // Emitter 与 proxy.Emitter 同签名，便于 main 统一注入。
 type Emitter func(event string, payload any)
 
@@ -128,17 +125,17 @@ func localProxyAddress(host string) string {
 func (a *App) Bootstrap() Bootstrap {
 	cfg := a.cfg.Get()
 	return Bootstrap{
-		State:        a.prox.State(),
-		CA:           a.caMgr.Info(),
-		Config:       cfg,
-		Trust:        a.trustStatus(),
-		Cert:         a.CertServer(),
-		SysProxy:     a.sysProxyStatus(),
-		AppDir:       a.cfg.Dir(),
-		ConfigPath:   a.cfg.ConfigPath(),
-		LogDir:       applog.Dir(),
-		Version:      Version,
-		Platform:     runtime.GOOS,
+		State:      a.prox.State(),
+		CA:         a.caMgr.Info(),
+		Config:     cfg,
+		Trust:      a.trustStatus(),
+		Cert:       a.CertServer(),
+		SysProxy:   a.sysProxyStatus(),
+		AppDir:     a.cfg.Dir(),
+		ConfigPath: a.cfg.ConfigPath(),
+		LogDir:     applog.Dir(),
+		Version:    VersionNumber(),
+		Platform:   runtime.GOOS,
 		// 顶栏/接入页展示的是"可直接填进客户端的地址"，不是监听通配地址
 		ProxyURL:     "http://" + net.JoinHostPort(localProxyAddress(cfg.ListenHost), strconv.Itoa(cfg.ProxyPort)),
 		LANIPs:       LANAddresses(),
@@ -294,7 +291,7 @@ func (a *App) RestartCertServer() (CertServerInfo, error) {
 		CommonName:  info.CommonName,
 		Fingerprint: info.Fingerprint,
 		NotAfter:    info.NotAfter,
-		Version:     Version,
+		Version:     VersionNumber(),
 	})
 	if _, err := a.certs.Start(); err != nil {
 		applog.Warnf("启动证书服务失败：%v", err)
@@ -497,7 +494,7 @@ func (a *App) ExportHAR(ids []string, target string) (HARExport, error) {
 		return HARExport{}, errors.New("没有可导出的会话")
 	}
 
-	data, err := capture.BuildHAR(flows, Version)
+	data, err := capture.BuildHAR(flows, VersionNumber())
 	if err != nil {
 		return HARExport{}, fmt.Errorf("生成 HAR 失败: %w", err)
 	}
@@ -524,7 +521,7 @@ func (a *App) ExportJSON(ids []string, target string) (HARExport, error) {
 		return HARExport{}, errors.New("没有可导出的会话")
 	}
 
-	data, err := capture.BuildJSON(flows, Version)
+	data, err := capture.BuildJSON(flows, VersionNumber())
 	if err != nil {
 		return HARExport{}, fmt.Errorf("生成 JSON 失败: %w", err)
 	}

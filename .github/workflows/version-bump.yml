@@ -1,0 +1,54 @@
+name: Version Bump
+
+# 从 main 的提交记录自动生成下一个版本号、CHANGELOG 与发布说明，
+# 并按项目约定先提到新分支、开 PR；合并后再打 v* tag 触发 Release。
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: '版本递增方式（auto 按 conventional commits 判断）'
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    name: 生成版本号与更新说明
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generate version and notes
+        id: gen
+        run: node scripts/prepare-release.mjs --bump "${{ inputs.bump }}"
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.gen.outputs.version }}"
+          BRANCH="release/v${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add CHANGELOG.md RELEASE_NOTES.md site/version.json build/config.yml build/windows/info.json build/windows/msix
+          git commit -m "chore: 自动生成 v${VERSION} 版本号与更新说明"
+          git push origin "$BRANCH"
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore: 发布 v${VERSION}" \
+            --body-file RELEASE_NOTES.md

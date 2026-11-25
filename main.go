@@ -128,7 +128,7 @@ func run() error {
 		CommonName:  info.CommonName,
 		Fingerprint: info.Fingerprint,
 		NotAfter:    info.NotAfter,
-		Version:     service.Version,
+		Version:     service.VersionNumber(),
 	})
 	if _, err := certSrv.Start(); err != nil {
 		// 证书服务失败不该挡住抓包主流程：记录下来，界面会显示"证书服务未运行"
@@ -175,6 +175,8 @@ func run() error {
 	emit := func(event string, payload any) { app.Event.Emit(event, payload) }
 	proxyMgr.SetEmitter(emit)
 	service.SetEmitter(emit)
+	// 更新安装完成后由服务层触发退出；重启新进程由各平台安装逻辑负责。
+	service.SetQuitter(app.Quit)
 
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "观流",

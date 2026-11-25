@@ -1,17 +1,17 @@
 {
 	"fixed": {
-		"file_version": "0.1.0",
-		"product_version": "0.1.0"
+		"file_version": "0.2.0",
+		"product_version": "0.2.0"
 	},
 	"info": {
 		"0409": {
-			"FileVersion": "0.1.0",
-			"ProductVersion": "0.1.0",
-			"CompanyName": "Kerison",
-			"FileDescription": "Cross-platform HTTP/HTTPS traffic inspector",
-			"LegalCopyright": "© 2026, K",
-			"ProductName": "FlowLens",
-			"Comments": "This is a comment"
+			"FileVersion": "0.2.0",
+			"ProductVersion": "0.2.0",
+			"CompanyName": "观流",
+			"FileDescription": "观流 - 跨平台 HTTP/HTTPS 抓包工作台",
+			"LegalCopyright": "(c) 2026, 观流",
+			"ProductName": "观流",
+			"Comments": "GuanLiu / 观流 - 跨平台 HTTP/HTTPS 抓包工作台"
 		}
 	}
 }

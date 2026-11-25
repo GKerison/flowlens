@@ -10,15 +10,15 @@
     <Installer
         Path="flowlens"
         Arguments=""
-        InstallLocation="C:\Program Files\Kerison\FlowLens">
+        InstallLocation="C:\Program Files\观流">
     </Installer>
     <PackageInformation
-        PackageName="FlowLens"
-        PackageDisplayName="FlowLens"
+        PackageName="观流"
+        PackageDisplayName="观流"
         PublisherName="CN=Kerison"
-        PublisherDisplayName="Kerison"
-        Version="0.1.0.0"
-        PackageDescription="Cross-platform HTTP/HTTPS traffic inspector">
+        PublisherDisplayName="观流"
+        Version="0.2.0.0"
+        PackageDescription="观流 - 跨平台 HTTP/HTTPS 抓包工作台">
         <Capabilities>
             <Capability Name="runFullTrust" />
             
@@ -26,8 +26,8 @@
         <Applications>
             <Application
                 Id="com.kerison.flowlens"
-                Description="Cross-platform HTTP/HTTPS traffic inspector"
-                DisplayName="FlowLens"
+                Description="观流 - 跨平台 HTTP/HTTPS 抓包工作台"
+                DisplayName="观流"
                 ExecutableName="flowlens"
                 EntryPoint="Windows.FullTrustApplication">
                 
@@ -41,7 +41,7 @@
         </Dependencies>
         <Properties>
             <Framework>false</Framework>
-            <DisplayName>FlowLens</DisplayName>
+            <DisplayName>观流</DisplayName>
             <PublisherDisplayName>Kerison</PublisherDisplayName>
             <Description>Cross-platform HTTP/HTTPS traffic inspector</Description>
             <Logo>Assets\AppIcon.png</Logo>

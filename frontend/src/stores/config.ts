@@ -22,6 +22,8 @@ import type {
   TrustResult,
   TrustStatus,
   UIStyle,
+  UpdateInfo,
+  UpdateResult,
 } from '../types'
 import { toMessage } from './helpers'
 import { useUiStore } from './ui'
@@ -46,6 +48,12 @@ export const useConfigStore = defineStore('config', {
     /** 最近一次自检结果 */
     selfTest: null as SelfTestResult | null,
     selfTestBusy: false,
+    /** 最近一次版本检测结果 */
+    updateInfo: null as UpdateInfo | null,
+    updateChecking: false,
+    updateInstalling: false,
+    /** 最近一次更新安装结果，失败或需手动安装时在设置页展示详情 */
+    updateResult: null as UpdateResult | null,
   }),
 
   getters: {
@@ -411,6 +419,59 @@ export const useConfigStore = defineStore('config', {
     /** 导出含私钥的 .p12。调用前必须由界面完成二次确认。 */
     async exportCA(password: string): Promise<CAExportResult> {
       return (await Backend.ExportCA(password)) as unknown as CAExportResult
+    },
+
+    /* ---------------- 版本更新 ---------------- */
+
+    /** 检查新版本。失败时保留旧结果，界面用 toast 提示原因。 */
+    async checkUpdate(silent = false): Promise<void> {
+      const { t } = useI18n()
+      if (this.updateChecking) return
+      this.updateChecking = true
+      try {
+        const info = (await Backend.CheckUpdate()) as unknown as UpdateInfo
+        this.updateInfo = info
+        if (!silent && info.upToDate) useUiStore().showToast(t('已是最新版本'), 'success')
+      } catch (err) {
+        // 启动时自动检查失败不该弹错误：没网也能正常使用抓包功能。
+        if (!silent) useUiStore().showToast(t('检查更新失败：{message}', { message: toMessage(err) }), 'error')
+      } finally {
+        this.updateChecking = false
+      }
+    },
+
+    /**
+     * 下载并安装更新，成功后由后端自动重启应用。
+     * 先确认：这一步会替换正在运行的安装包，用户应当先停止抓包并保存数据。
+     */
+    async installUpdate(): Promise<void> {
+      const ui = useUiStore()
+      const { t } = useI18n()
+      if (this.updateInstalling) return
+      const ok = await ui.confirmAction({
+        title: t('更新并重启'),
+        message: t('将下载最新安装包并自动安装，完成后应用会立即重启。请先保存正在编辑的数据。继续？'),
+        confirmText: t('更新并重启'),
+      })
+      if (!ok) return
+
+      this.updateInstalling = true
+      try {
+        const result = (await Backend.InstallUpdate()) as unknown as UpdateResult
+        this.updateResult = result
+        ui.showToast(
+          result.message || (result.ok ? t('更新完成') : t('更新失败')),
+          result.ok ? 'success' : 'error',
+        )
+        if (result.ok && !result.restarting && !result.manual) {
+          // 服务端模式没有图形界面，无法自动退出；提示用户自行重启。
+          ui.showToast(t('请手动关闭并重新打开观流以完成更新'), 'info')
+        }
+      } catch (err) {
+        ui.showToast(t('更新失败：{message}', { message: toMessage(err) }), 'error')
+      } finally {
+        this.updateInstalling = false
+      }
     },
 
     /* ---------------- 自检 ---------------- */

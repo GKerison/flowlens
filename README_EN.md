@@ -2,13 +2,13 @@
   <img src="docs/assets/guanliu-icon.svg" width="120" alt="GuanLiu icon" />
 </p>
 
-# GuanLiu (FlowLens)
+# GuanLiu
 
 A cross-platform HTTP/HTTPS debugging workstation. A native desktop client: start the proxy, install the CA, scan the QR code on your phone, and read plaintext traffic in three steps.
 
-[中文](./README.md) · [Requirements](./REQUIREMENTS.md) · [Conventions](./CONVENTIONS.md) · [Manual test checklist](./docs/manual-test.md)
+[中文](./README.md) · [Requirements](./REQUIREMENTS.md) · [Changelog](./CHANGELOG.md) · [Conventions](./CONVENTIONS.md) · [Manual test checklist](./docs/manual-test.md)
 
-> Status: M1–M15 delivered. Ready for daily use, with bilingual UI, three interface styles, and three desktop platforms.
+> Status: M1–M16 delivered. Ready for daily use, with bilingual UI, three interface styles, three desktop platforms, and built-in update checks.
 
 ## Quick start
 
@@ -26,6 +26,7 @@ Pausing capture turns the proxy into a **plain relay**: no decryption, no record
 - **Data tools**: HAR/JSON export (save-as), request replay with editing, Map Local, Map Remote, request/response breakpoints
 - **Mobile onboarding**: virtual NIC address filtering, usable proxy address dropdown, self-check, iOS full-trust guidance and verification link
 - **Experience**: bilingual UI (Chinese by default), standard / spacious / minimal styles, interface animations, config import/export
+- **Updates**: a silent startup check, manual check with release notes in Settings, and one-click download/install/restart
 
 ## Build
 
@@ -51,7 +52,9 @@ See `Taskfile.yml` and `build/<platform>/Taskfile.yml` for cross-compilation opt
 ## Branching & release policy
 
 - `main` is the only releasable branch: **develop every change on a feature branch, merge into main, then tag to release**
-- Pushing a `v*` tag triggers GitHub Actions to build macOS, Windows and Linux artifacts and publish a Release
+- Run the `Version Bump` GitHub Action: it derives the next version from conventional commits, generates `CHANGELOG.md`, release notes and `site/version.json`, then opens a PR into main
+- After merging, push a `v*` tag to trigger Release: artifacts for macOS, Windows and Linux are published with the generated release notes
+- Locally, run `wails3 task release:prepare -- --bump patch|minor|major` for the same output
 - Release downloads: <https://github.com/GKerison/flowlens/releases/latest>
 - All three platforms use GitHub-hosted runners; the project site is published with GitHub Pages
 - See the branching workflow section in `CONVENTIONS.md`

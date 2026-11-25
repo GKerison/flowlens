@@ -10,13 +10,13 @@
   <Identity 
     Name="com.kerison.flowlens"
     Publisher="CN=Kerison"
-    Version="0.1.0.0"
+    Version="0.2.0.0"
     ProcessorArchitecture="arm64" />
   
   <Properties>
-    <DisplayName>FlowLens</DisplayName>
+    <DisplayName>观流</DisplayName>
     <PublisherDisplayName>Kerison</PublisherDisplayName>
-    <Description>Cross-platform HTTP/HTTPS traffic inspector</Description>
+    <Description>观流 - 跨平台 HTTP/HTTPS 抓包工作台</Description>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   
@@ -31,8 +31,8 @@
   <Applications>
     <Application Id="com.kerison.flowlens" Executable="flowlens" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="FlowLens"
-        Description="Cross-platform HTTP/HTTPS traffic inspector"
+        DisplayName="观流"
+        Description="观流 - 跨平台 HTTP/HTTPS 抓包工作台"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

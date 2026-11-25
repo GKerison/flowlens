@@ -8,16 +8,16 @@
     !define INFO_PROJECTNAME "flowlens"
 !endif
 !ifndef INFO_COMPANYNAME
-    !define INFO_COMPANYNAME "Kerison"
+    !define INFO_COMPANYNAME "观流"
 !endif
 !ifndef INFO_PRODUCTNAME
-    !define INFO_PRODUCTNAME "FlowLens"
+    !define INFO_PRODUCTNAME "观流"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "0.1.0"
+    !define INFO_PRODUCTVERSION "0.2.0"
 !endif
 !ifndef INFO_COPYRIGHT
-    !define INFO_COPYRIGHT "© 2026, K"
+    !define INFO_COPYRIGHT "(c) 2026, 观流"
 !endif
 !ifndef PRODUCT_EXECUTABLE
     !define PRODUCT_EXECUTABLE "${INFO_PROJECTNAME}.exe"

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
-Name=FlowLens
-Comment=Cross-platform HTTP/HTTPS traffic inspector
+Name=观流
+Comment=观流 - 跨平台 HTTP/HTTPS 抓包工作台
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/flowlens %u
 Terminal=false

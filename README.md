@@ -2,13 +2,13 @@
   <img src="docs/assets/guanliu-icon.svg" width="120" alt="观流图标" />
 </p>
 
-# 观流（FlowLens）
+# 观流（GuanLiu）
 
 跨平台 HTTP/HTTPS 抓包工作台。桌面原生客户端：开代理 → 装证书 → 扫码连手机，三步看到明文流量。
 
-[English](./README_EN.md) · [功能需求](./REQUIREMENTS.md) · [开发约定](./CONVENTIONS.md) · [手工验证清单](./docs/manual-test.md)
+[English](./README_EN.md) · [功能需求](./REQUIREMENTS.md) · [更新日志](./CHANGELOG.md) · [开发约定](./CONVENTIONS.md) · [手工验证清单](./docs/manual-test.md)
 
-> 状态：M1–M15 已完成。开箱可用，支持中英双语、三种界面风格、三大桌面平台。
+> 状态：M1–M16 已完成。开箱可用，支持中英双语、三种界面风格、三大桌面平台，内置版本检测与一键更新。
 
 ## 快速开始
 
@@ -26,6 +26,7 @@
 - **数据处理**：HAR/JSON 导出（可另存为）、请求重放（可编辑 method/URL/头/体）、Map Local 本地映射、Map Remote 远程映射、断点改写
 - **移动端接入**：虚拟网卡地址过滤、可用代理地址下拉、接入自检、iOS 完全信任指引与验证入口
 - **体验**：中英双语（默认中文）、标准/舒展（大屏）/极简三种风格、界面动效、配置导入导出
+- **版本更新**：启动后静默检查新版本，设置页可手动检查并查看更新说明；点击「更新并重启」自动下载安装包、静默安装并重启
 
 ## 构建
 
@@ -51,7 +52,9 @@ bin/flowlens-server
 ## 发版与分支约定
 
 - `main` 是唯一可发版分支：**任何功能改动先开 feature 分支开发 → 合并回 main → 打 tag 打包发版**
-- 推送 `v*` tag 会触发 GitHub Actions，自动生成 macOS / Windows / Linux 三平台产物并创建 Release
+- 运行 GitHub Actions 的 `Version Bump`：按 conventional commits 自动推断版本号，生成 `CHANGELOG.md`、发布说明与 `site/version.json`，并开 PR 回 main
+- 合并后推送 `v*` tag 触发 Release：自动生成 macOS / Windows / Linux 三平台产物并创建 Release，发布说明使用自动生成的内容
+- 本地也可执行 `wails3 task release:prepare -- --bump patch|minor|major` 生成同样内容
 - Release 下载地址：<https://github.com/GKerison/flowlens/releases/latest>
 - 三平台均使用 GitHub 托管 Runner；项目站点通过 GitHub Pages 自动发布
 - 详见 `CONVENTIONS.md` 的分支工作流章节

@@ -6,12 +6,12 @@
 name: "flowlens"
 arch: ${GOARCH}
 platform: "linux"
-version: "0.1.0"
+version: "0.2.0"
 section: "default"
 priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
-description: "Cross-platform HTTP/HTTPS traffic inspector"
-vendor: "Kerison"
+description: "观流 - 跨平台 HTTP/HTTPS 抓包工作台"
+vendor: "观流"
 homepage: "https://wails.io"
 license: "MIT"
 release: "1"

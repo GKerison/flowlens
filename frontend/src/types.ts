@@ -247,6 +247,29 @@ export interface CertServerInfo {
   error?: string
 }
 
+/** 版本检测结果。assetUrl 由后端校验域名后才允许下载。 */
+export interface UpdateInfo {
+  currentVersion: string
+  latestVersion: string
+  notes: string
+  publishedAt: string
+  assetName: string
+  assetUrl: string
+  assetSize: number
+  pageUrl: string
+  upToDate: boolean
+  checkedAt: string
+}
+
+/** 一键更新结果。manual=true 表示需要用户手动完成安装。 */
+export interface UpdateResult {
+  ok: boolean
+  message: string
+  path: string
+  restarting: boolean
+  manual: boolean
+}
+
 /** 端到端自检结果。 */
 export interface SelfTestResult {
   ok: boolean

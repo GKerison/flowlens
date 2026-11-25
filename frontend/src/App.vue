@@ -17,6 +17,13 @@ import { useI18n } from './i18n'
 
 onMounted(init)
 
+// 启动后静默检查一次更新：结果只体现在设置页的角标上，不打断抓包。
+// 延迟 3 秒避开启动阶段的文件与网络 IO；失败也不提示，用户可随时手动检查。
+let updateTimer = 0
+onMounted(() => {
+  updateTimer = window.setTimeout(() => void config.checkUpdate(true), 3000)
+})
+
 const ui = useUiStore()
 const config = useConfigStore()
 const { t } = useI18n()
@@ -99,6 +106,7 @@ onMounted(() => {
   window.addEventListener('keydown', onEscape, true)
 })
 onUnmounted(() => {
+  window.clearTimeout(updateTimer)
   window.removeEventListener('pointerdown', onPointerDown)
   window.removeEventListener('keydown', onEscape, true)
 })

@@ -15,9 +15,36 @@ permissions:
   contents: write
 
 jobs:
+  prepare:
+    name: 生成版本号与发布说明
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generate version and release notes
+        id: release
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          node scripts/prepare-release.mjs --tag "$TAG"
+      - name: Upload release notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: RELEASE_NOTES.md
+          if-no-files-found: error
+
   build-macos:
     name: 'macOS (universal: arm64 + amd64)'
+    needs: prepare
     runs-on: macos-latest
+    env:
+      APP_VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,7 +78,10 @@ jobs:
 
   build-windows:
     name: Windows (x64, NSIS installer)
+    needs: prepare
     runs-on: windows-latest
+    env:
+      APP_VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -93,7 +123,10 @@ jobs:
 
   build-linux:
     name: Linux (x64, AppImage / deb / rpm)
+    needs: prepare
     runs-on: ubuntu-latest
+    env:
+      APP_VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -135,19 +168,28 @@ jobs:
 
   release:
     name: Publish GitHub Release
-    needs: [build-macos, build-windows, build-linux]
+    needs: [prepare, build-macos, build-windows, build-linux]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: dist-artifacts
+      - name: Download release notes
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes
       - name: List artifacts
         run: find dist-artifacts -type f | head -50
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}
-          files: dist-artifacts/**/*
-          generate_release_notes: true
+          name: 观流 v${{ needs.prepare.outputs.version }}
+          body_path: release-notes/RELEASE_NOTES.md
+          files: |
+            dist-artifacts/**/*
+            release-notes/RELEASE_NOTES.md
+          generate_release_notes: false
           draft: false
           prerelease: false
